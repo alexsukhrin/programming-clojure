@@ -216,3 +216,175 @@ foo ;; 10
 (ellipsize "The quick brown fox jumps over the lazy dog.") ;; "The quick brown ..."
 
 ;; Namespaces
+(def foo 10)
+
+(resolve 'foo)
+
+(in-ns 'myapp)
+
+String ;; java.lang.String
+
+(clojure.core/use 'clojure.core)
+
+File/separator ;; java.lang.Exception: No such namespace: File
+
+java.io.File/separator ;; "/"
+
+(import '(java.io InputStream File))
+
+(.exists (File. "/tmp")) ;; true
+
+(require 'clojure.string)
+
+(clojure.string/split "Something,separated,by,commas" #",") ;; ["Something" "separated" "by" "commas"]
+
+(require '[clojure.string :as str])
+
+(str/split "Something,separated,by,commas" #",") ;; ["Something" "separated" "by" "commas"]
+
+(ns examples.exploring
+  (:require [clojure.string :as str])
+  (:import (java.io File)))
+
+(in-ns 'user)
+
+(find-doc "ns-")
+
+;; Metadata
+(meta #'str)
+
+;; see also shorter form below
+(defn ^{:tag String} shout [^{:tag String} s] (clojure.string/upper-case s))
+
+(meta #'shout)
+
+(defn ^String shout [^String s] (clojure.string/upper-case s))
+
+(defn shout
+  ([s] (clojure.string/upper-case s)) 
+  {:tag String})
+
+;; Calling Java
+(new java.util.Random)
+
+(java.util.Random.)
+
+(def rnd (new java.util.Random))
+
+(. rnd nextInt)
+
+(. rnd nextInt 10)
+
+;; Instance field
+(def p (java.awt.Point. 10 20))
+(. p x) ;; 10
+
+;; Static method
+(. System lineSeparator) ;; "\n"
+
+;; Static field
+(. Math PI)
+
+;; (.method instance & args)
+;; (.field instance)
+;; (.-field instance)
+;; (Class/method & args)
+;; Class/field
+
+(import '(java.util Random Locale)
+        '(java.text MessageFormat))
+
+Random ;; java.util.Random
+Locale ;; java.util.Locale
+MessageFormat ;; java.text.MessageFormat
+
+;;  Clojure provides a javadoc function that will make your life much easier.
+(javadoc java.net.URL)
+
+
+;; Comments
+
+;; this is a comment
+
+(comment
+  (defn ignore-me []
+    ;; not done yet
+    ))
+
+(defn triple [number]
+  #_(println "debug triple" number)
+  (* 3 number))
+
+
+;; Flow Control
+
+(defn is-small? [number]
+  (if (< number 100) "yes"))
+
+(is-small? 50) ;; "yes"
+
+(is-small? 50000) ;; nil
+
+(defn is-small? [number]
+  (if (< number 100) "yes" "no"))
+
+(is-small? 50000) ;; "no"
+
+
+;; Introduce Side Effects with do
+
+(defn is-small? [number] 
+  (if (< number 100) 
+    "yes" 
+    (do 
+      (println "Saw a big number" number)
+      "no")))
+
+(is-small? 200)
+
+
+;; Recur with loop/recur
+;; (loop [bindings*] exprs*)
+;; (recur exprs*)
+
+(loop [result [] x 5] 
+  (if (zero? x) 
+    result 
+    (recur (conj result x) (dec x)))) ;; [5 4 3 2 1]
+
+(defn countdown [result x] 
+  (if (zero? x) 
+    result 
+    (recur (conj result x) (dec x))))
+
+(countdown [] 5) ;; [5 4 3 2 1]
+
+(into [] (take 5 (iterate dec 5))) ;; [5 4 3 2 1]
+
+(into [] (drop-last (reverse (range 6)))) ;; [5 4 3 2 1]
+
+(vec (reverse (rest (range 6)))) ;; [5 4 3 2 1]
+
+;; Where’s My for Loop?
+(defn indexed [coll] (map-indexed vector coll))
+
+(indexed "abcde") ;; ([0 \a] [1 \b] [2 \c] [3 \d] [4 \e])
+
+(defn index-filter [pred coll] 
+  (when pred 
+    (for [[idx elt] (indexed coll) :when (pred elt)] idx)))
+
+(index-filter #{\a \b} "abcdbbb") ;; (0 1 4 5 6)
+
+(index-filter #{\a \b} "xyz") ;; ()
+
+(defn index-of-any [pred coll] 
+  (first (index-filter pred coll)))
+
+(index-of-any #{\z \a} "zzabyycdxx")
+
+(index-of-any #{\b \y} "zzabyycdxx") ;; 3
+
+(nth
+ (index-filter #{:h} [:t :t :h :t :h :t :t :t :h :h])
+ 2) ;; 8
