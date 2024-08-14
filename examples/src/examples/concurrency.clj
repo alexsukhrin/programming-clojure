@@ -141,9 +141,39 @@
 
 ;; The Unified Update Model
 
+;; Managing Per-Thread State with Vars
+(def ^:dynamic foo 10)
 
+foo ;; 10
 
+(.start (Thread. (fn [] (println foo)))) ;; nil
+                                         ;; 10
 
+;; (binding [bindings] & body)
+(binding [foo 42] foo) ;; 42
 
+(defn print-foo [] (println foo))
 
+(let [foo "let foo"] (print-foo)) ;; 10
 
+(binding [foo "bound foo"] (print-foo)) ;; bound foo
+
+;; Acting at a Distance
+
+(defn ^:dynamic slow-double [n] 
+  (Thread/sleep 100)
+  (* n 2))
+
+(defn calls-slow-double []
+  (map slow-double [1 2 1 2 1 2]))
+
+(time (dorun (calls-slow-double))) ;; "Elapsed time: 622.86675 msecs"
+
+;; (memoize function)
+(defn demo-memoize [] 
+  (time 
+   (dorun 
+    (binding [slow-double (memoize slow-double)] 
+      (calls-slow-double)))))
+
+(demo-memoize) ;; "Elapsed time: 210.404166 msecs"
