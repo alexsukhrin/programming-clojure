@@ -446,7 +446,9 @@
                   (to-msec [this tempo] (+ (rand-int 1000) min-duration))
                   (key-number [this] (rand-int 100))
                   (play [this tempo midi-channel]
-                    (let [velocity (+ (rand-int 100) min-velocity)] (.noteOn midi-channel (key-number this) velocity) (Thread/sleep (to-msec this tempo)))))]
+                    (let [velocity (+ (rand-int 100) min-velocity)] 
+                      (.noteOn midi-channel (key-number this) velocity) 
+                      (Thread/sleep (to-msec this tempo)))))]
   (perform (repeat 15 rand-note)))
 
 ;; Wrapping Up
