@@ -4,10 +4,10 @@
 
 ;; bad idea
 (defn stack-consuming-fibo [n] (cond
-   (= n 0) 0
-   (= n 1) 1
-   :else (+ (stack-consuming-fibo (- n 1))
-            (stack-consuming-fibo (- n 2)))))
+                                 (= n 0) 0
+                                 (= n 1) 1
+                                 :else (+ (stack-consuming-fibo (- n 1))
+                                          (stack-consuming-fibo (- n 2)))))
 
 (stack-consuming-fibo 9) ;; 34
 (stack-consuming-fibo 1000000) ;; StackOverflowError clojure.lang.Numbers.minus
@@ -15,10 +15,10 @@
 ;; Tail Recursion
 
 ;; (letfn fnspecs & body) ; fnspecs ==> [(fname [params*] exprs)+]
-(defn tail-fibo [n] 
-  (letfn [(fib [current next n] 
-               (if (zero? n) current 
-                   (fib next (+ current next) (dec n))))] 
+(defn tail-fibo [n]
+  (letfn [(fib [current next n]
+            (if (zero? n) current
+                (fib next (+ current next) (dec n))))]
     (fib 0N 1N n)))
 
 (tail-fibo 9) ;; 34N
@@ -29,11 +29,11 @@
 
 ;; Self-recursion with recur
 ;; better but not great
-(defn recur-fibo [n] 
-  (letfn [(fib[current next n] 
-           (if (zero? n) 
-             current 
-             (recur next (+ current next) (dec n))))]
+(defn recur-fibo [n]
+  (letfn [(fib [current next n]
+            (if (zero? n)
+              current
+              (recur next (+ current next) (dec n))))]
     (fib 0N 1N n)))
 
 (recur-fibo 1000000) ;; 195 ... 208,982 other digits ... 875N
@@ -41,12 +41,12 @@
 ;; Lazy Sequences
 
 ;; (lazy-seq & body)
-(defn lazy-seq-fibo 
-  ([] 
+(defn lazy-seq-fibo
+  ([]
    (concat [0 1] (lazy-seq-fibo 0N 1N)))
   ([a b]
-   (let [n (+ a b)] 
-     (lazy-seq 
+   (let [n (+ a b)]
+     (lazy-seq
       (cons n (lazy-seq-fibo b n))))))
 
 (take 10 (lazy-seq-fibo)) ;; (0 1 1N 2N 3N 5N 8N 13N 21N 34N)
@@ -81,13 +81,13 @@
 
 ;; Lazier Than Lazy
 
-(defn count-heads-pairs [coll] 
-  (loop [cnt 0 coll coll] 
-    (if (empty? coll) 
-      cnt 
-      (recur (if (= :h (first coll) (second coll)) 
-               (inc cnt) 
-               cnt) 
+(defn count-heads-pairs [coll]
+  (loop [cnt 0 coll coll]
+    (if (empty? coll)
+      cnt
+      (recur (if (= :h (first coll) (second coll))
+               (inc cnt)
+               cnt)
              (rest coll)))))
 
 (count-heads-pairs [:h :h :h :t :h]) ;; 2
@@ -97,12 +97,12 @@
 ;; Transforming the Input Sequence
 
 ;; overly complex, better approaches follow...
-(defn by-pairs [coll] 
-  (let [take-pair (fn [c] 
+(defn by-pairs [coll]
+  (let [take-pair (fn [c]
                     (when (next c) (take 2 c)))]
     (lazy-seq
      (when-let [pair (seq (take-pair coll))]
-         (cons pair (by-pairs (rest coll)))))))
+       (cons pair (by-pairs (rest coll)))))))
 
 (by-pairs [:h :t :t :h :h :h]) ;; ((:h :t) (:t :t) (:t :h) (:h :h) (:h :h))
 
@@ -123,7 +123,7 @@
 (count-if odd? [1 2 3 4 5]) ;; 3
 
 (defn count-runs
-  "Count runs of length n where pred is true in coll." 
+  "Count runs of length n where pred is true in coll."
   [n pred coll]
   (count-if #(every? pred %) (partition n 1 coll)))
 
@@ -133,11 +133,10 @@
 
 (count-runs 3 #(= % :h) [:h :t :t :h :h :h]) ;; 1
 
-
 ;; Currying and Partial Application
 
 ;; (partial f & partial-args)
-(def ^{:doc "Count runs of length two that are both heads"} 
+(def ^{:doc "Count runs of length two that are both heads"}
   count-heads-pairs (partial count-runs 2 #(= % :h)))
 
 (partial count-runs 1 #(= % :h))
@@ -166,14 +165,14 @@
 
 (declare my-odd? my-even?)
 
-(defn my-odd? [n] 
-  (if (= n 0) 
-    false 
+(defn my-odd? [n]
+  (if (= n 0)
+    false
     (my-even? (dec n))))
 
-(defn my-even? [n] 
-  (if (= n 0) 
-    true 
+(defn my-even? [n]
+  (if (= n 0)
+    true
     (my-odd? (dec n))))
 
 (map my-even? (range 10)) ;; (true false true false true false true false true false)
@@ -183,10 +182,10 @@
 (my-even? (* 1000 1000 1000)) ;; StackOverflowError clojure.lang.Numbers$LongOps.equiv
 
 ;; Converting to Self-recursion
-(defn parity [n] 
-  (loop [n n par 0] 
-    (if (= n 0) 
-      par 
+(defn parity [n]
+  (loop [n n par 0]
+    (if (= n 0)
+      par
       (recur (dec n) (- 1 par)))))
 
 (map parity (range 10)) ;; (0 1 0 1 0 1 0 1 0 1)
@@ -204,27 +203,27 @@
 ;; Example only. Don't write code like this.
 (defn trampoline-fibo [n]
   (let [fib (fn fib [f-2 f-1 current]
-              (let [f (+ f-2 f-1)] 
-                (if (= n current) 
+              (let [f (+ f-2 f-1)]
+                (if (= n current)
                   f
                   #(fib f-1 f (inc current)))))]
-(cond
-    (= n 0) 0
-    (= n 1) 1
-    :else (fib 0N 1 2))))
+    (cond
+      (= n 0) 0
+      (= n 1) 1
+      :else (fib 0N 1 2))))
 
 (trampoline trampoline-fibo 9) ;; 34N
 
 (declare my-odd? my-even?)
 
-(defn my-odd? [n] 
-  (if (= n 0) 
-    false 
+(defn my-odd? [n]
+  (if (= n 0)
+    false
     #(my-even? (dec n))))
 
-(defn my-even? [n] 
-  (if (= n 0) 
-    true 
+(defn my-even? [n]
+  (if (= n 0)
+    true
     #(my-odd? (dec n))))
 
 (trampoline my-even? 1000000) ;; true
@@ -232,25 +231,25 @@
 ;; Replacing Recursion with Laziness
 
 ;; overly-literal port, do not use
-(declare replace-symbol replace-symbol-expression) 
+(declare replace-symbol replace-symbol-expression)
 
 (defn replace-symbol [coll oldsym newsym]
   (if (empty? coll) ()
-    (cons (replace-symbol-expression
-           (first coll) oldsym newsym)
-          (replace-symbol
-           (rest coll) oldsym newsym))))
+      (cons (replace-symbol-expression
+             (first coll) oldsym newsym)
+            (replace-symbol
+             (rest coll) oldsym newsym))))
 
-(defn replace-symbol-expression [symbol-expr oldsym newsym] 
+(defn replace-symbol-expression [symbol-expr oldsym newsym]
   (if (symbol? symbol-expr)
     (if (= symbol-expr oldsym) newsym
-      symbol-expr)
+        symbol-expr)
     (replace-symbol symbol-expr oldsym newsym)))
 
-(defn deeply-nested [n] 
-  (loop [n n result '(bottom)] 
-    (if (= n 0) 
-      result 
+(defn deeply-nested [n]
+  (loop [n n result '(bottom)]
+    (if (= n 0)
+      result
       (recur (dec n) (list result)))))
 
 (deeply-nested 5) ;; ((((((bottom))))))
@@ -277,7 +276,7 @@
      (cons (replace-symbol (first coll) oldsym newsym)
            (replace-symbol (rest coll) oldsym newsym)))))
 
-(defmethod replace-symbol :scalar [obj oldsym newsym] 
+(defmethod replace-symbol :scalar [obj oldsym newsym]
   (if (= obj oldsym) newsym obj))
 
 (replace-symbol (deeply-nested 10000) 'bottom 'deepest) ;; (((((((((((((((((((((((((#)))))))))))))))))))))))))
@@ -288,13 +287,13 @@
 (declare m f)
 
 (defn m [n]
-  (if (zero? n) 
-    0 
+  (if (zero? n)
+    0
     (- n (f (m (dec n))))))
 
 (defn f [n]
-  (if (zero? n) 
-    1 
+  (if (zero? n)
+    1
     (- n (m (f (dec n))))))
 
 (time (m 250)) ;; 155 "Elapsed time: 52259.334375 msecs"
@@ -307,7 +306,7 @@
 
 (m 10000) ;; java.lang.StackOverflowError
 
-(def m-seq (map m (iterate inc 0))) 
+(def m-seq (map m (iterate inc 0)))
 (def f-seq (map f (iterate inc 0)))
 
 (nth m-seq 250) ;; 155
@@ -322,18 +321,18 @@
 (defn sum-squares [n]
   (into [] (map square) (range n)))
 
-(defn preds-seq [] 
-  (->> (all-ns) 
-       (map ns-publics) 
-       (mapcat vals) 
-       (filter #(clojure.string/ends-with? % "?")) (map #(str (.-sym %))) 
+(defn preds-seq []
+  (->> (all-ns)
+       (map ns-publics)
+       (mapcat vals)
+       (filter #(clojure.string/ends-with? % "?")) (map #(str (.-sym %)))
        vec))
 
-(defn preds [] 
-  (into [] 
-        (comp (map ns-publics) 
-              (mapcat vals) 
-              (filter #(clojure.string/ends-with? % "?")) (map #(str (.-sym %)))) 
+(defn preds []
+  (into []
+        (comp (map ns-publics)
+              (mapcat vals)
+              (filter #(clojure.string/ends-with? % "?")) (map #(str (.-sym %))))
         (all-ns)))
 
 (defn non-blank? [s]

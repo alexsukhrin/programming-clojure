@@ -34,14 +34,12 @@
 
 (* 1000N 1000 1000 1000 1000 1000 1000) ;; 1000000000000000000000N
 
-
 ;; Symbols
 ;; Symbols name all sorts of things in Clojure:
 ;; • Functions like str and concat
 ;; • “Operators” like + and -, which are, after all, just functions 
 ;; • Java classes like java.lang.String and java.util.Random
 ;; • Namespaces like clojure.core and Java packages like java.lang
-
 
 ;; Collections
 
@@ -72,7 +70,6 @@
 ;; constructor
 (->Book "title" "author")
 
-
 ;; Strings and Characters
 "This is a\nmultiline string" ;; "This is a\nmultiline string"
 
@@ -96,7 +93,6 @@ a multiline string" ;; "This is also\na multiline string"
 
 ;; There are many more predicates in Clojure—go to the REPL and type
 (find-doc #"\?$")
-
 
 ;; Functions
 (str "hello" " " "world") ;; "hello world"
@@ -127,8 +123,8 @@ Default username is 'world'."
 (greeting) ;; "Hello, world"
 
 ;; function args
-(defn date [person-1 person-2 & chaperones] 
-  (println person-1 "and" person-2 
+(defn date [person-1 person-2 & chaperones]
+  (println person-1 "and" person-2
            "went out with" (count chaperones) "chaperones."))
 
 (date "Romeo" "Juliet" "Friar Lawrence" "Nurse") ;; Romeo and Juliet went out with 2 chaperones.
@@ -183,9 +179,9 @@ foo ;; 10
 (triple 10) ;; 30
 
 ;; (let [bindings*] exprs*)
-(defn square-corners [bottom left size] 
-  (let [top (+ bottom size) 
-        right (+ left size)] 
+(defn square-corners [bottom left size]
+  (let [top (+ bottom size)
+        right (+ left size)]
     [[bottom left] [top left] [top right] [bottom right]]))
 
 ;; Destructuring
@@ -194,7 +190,7 @@ foo ;; 10
 
 (greet-author-1 {:last-name "Vinge" :first-name "Vernor"}) ;; Hello, Vernor
 
-(defn greet-author-2 [{fname :first-name}] 
+(defn greet-author-2 [{fname :first-name}]
   (println "Hello," fname))
 
 (greet-author-2 {:last-name "Vinge" :first-name "Vernor"}) ;; Hello, Vernor
@@ -261,7 +257,7 @@ java.io.File/separator ;; "/"
 (defn ^String shout [^String s] (clojure.string/upper-case s))
 
 (defn shout
-  ([s] (clojure.string/upper-case s)) 
+  ([s] (clojure.string/upper-case s))
   {:tag String})
 
 ;; Calling Java
@@ -301,7 +297,6 @@ MessageFormat ;; java.text.MessageFormat
 ;;  Clojure provides a javadoc function that will make your life much easier.
 (javadoc java.net.URL)
 
-
 ;; Comments
 
 ;; this is a comment
@@ -314,7 +309,6 @@ MessageFormat ;; java.text.MessageFormat
 (defn triple [number]
   #_(println "debug triple" number)
   (* 3 number))
-
 
 ;; Flow Control
 
@@ -330,31 +324,29 @@ MessageFormat ;; java.text.MessageFormat
 
 (is-small? 50000) ;; "no"
 
-
 ;; Introduce Side Effects with do
 
-(defn is-small? [number] 
-  (if (< number 100) 
-    "yes" 
-    (do 
+(defn is-small? [number]
+  (if (< number 100)
+    "yes"
+    (do
       (println "Saw a big number" number)
       "no")))
 
 (is-small? 200)
 
-
 ;; Recur with loop/recur
 ;; (loop [bindings*] exprs*)
 ;; (recur exprs*)
 
-(loop [result [] x 5] 
-  (if (zero? x) 
-    result 
+(loop [result [] x 5]
+  (if (zero? x)
+    result
     (recur (conj result x) (dec x)))) ;; [5 4 3 2 1]
 
-(defn countdown [result x] 
-  (if (zero? x) 
-    result 
+(defn countdown [result x]
+  (if (zero? x)
+    result
     (recur (conj result x) (dec x))))
 
 (countdown [] 5) ;; [5 4 3 2 1]
@@ -370,15 +362,15 @@ MessageFormat ;; java.text.MessageFormat
 
 (indexed "abcde") ;; ([0 \a] [1 \b] [2 \c] [3 \d] [4 \e])
 
-(defn index-filter [pred coll] 
-  (when pred 
+(defn index-filter [pred coll]
+  (when pred
     (for [[idx elt] (indexed coll) :when (pred elt)] idx)))
 
 (index-filter #{\a \b} "abcdbbb") ;; (0 1 4 5 6)
 
 (index-filter #{\a \b} "xyz") ;; ()
 
-(defn index-of-any [pred coll] 
+(defn index-of-any [pred coll]
   (first (index-filter pred coll)))
 
 (index-of-any #{\z \a} "zzabyycdxx")

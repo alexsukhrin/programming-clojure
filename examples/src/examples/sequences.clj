@@ -106,7 +106,6 @@
 
 (vec (range 3)) ;; [0 1 2]
 
-
 ;; Filtering Sequences
 
 ;; (filter pred coll)
@@ -151,7 +150,7 @@
 (map #(format "<p>%s</p>" %) ["the" "quick" "brown" "fox"]) ;; ("<p>the</p>" "<p>quick</p>" "<p>brown</p>" "<p>fox</p>")
 
 (map #(format "<%s>%s</%s>" %1 %2 %1)
-     ["h1" "h2" "h3" "h1"] 
+     ["h1" "h2" "h3" "h1"]
      ["the" "quick" "brown" "fox"]) ;; ("<h1>the</h1>" "<h2>quick</h2>" "<h3>brown</h3>" "<h1>fox</h1>")
 
 ;; (reduce f coll)
@@ -169,7 +168,7 @@
 (sort-by :grade > [{:grade 83} {:grade 90} {:grade 77}]) ;; ({:grade 90} {:grade 83} {:grade 77})
 
 ;; (for [binding-form coll-expr filter-expr? ...] expr)
-(for [word ["the" "quick" "brown" "fox"]] 
+(for [word ["the" "quick" "brown" "fox"]]
   (format "<p>%s</p>" word)) ;; ("<p>the</p>" "<p>quick</p>" "<p>brown</p>" "<p>fox</p>")
 
 (take 10 (for [n whole-numbers :when (even? n)] n)) ;; (2 4 6 8 10 12 14 16 18 20)
@@ -182,7 +181,6 @@
 (for [rank (range 1 9) file "ABCDEFGH"]
   (format "%c%d" file rank)) ;; ("A1" "B1" ... elided ... "G8" "H8")
 
-
 ;; Lazy and Infinite Sequences
 
 ;; Taken from clojure.contrib.lazy-seqs
@@ -193,16 +191,16 @@
   (concat
    [2 3 5 7]
    (lazy-seq
-(let [primes-from
-(fn primes-from [n [f & r]]
-(if (some #(zero? (rem n %))
-(take-while #(<= (* % %) n) primes))
+    (let [primes-from
+          (fn primes-from [n [f & r]]
+            (if (some #(zero? (rem n %))
+                      (take-while #(<= (* % %) n) primes))
               (recur (+ n f) r)
-(lazy-seq (cons n (primes-from (+ n f) r))))) wheel(cycle[24246264246626 4 2 64684242486462 4 6
-                        2 6 6 4 2 4 6 2 6 4 2 4 2 10 2 10])]
+              (lazy-seq (cons n (primes-from (+ n f) r))))) wheel (cycle [24246264246626 4 2 64684242486462 4 6
+                                                                          2 6 6 4 2 4 6 2 6 4 2 4 2 10 2 10])]
       (primes-from 11 wheel)))))
 
-(def ordinals-and-primes 
+(def ordinals-and-primes
   (map vector (iterate inc 1) primes))
 
 (take 5 (drop 1000 ordinals-and-primes))
@@ -237,14 +235,13 @@
 
 (apply str (reverse "hello")) ;; "olleh"
 
-
 ;; Seq-ing Regular Expressions
 
 ;; (re-matcher regexp string)
 (let [m (re-matcher #"\w+" "the quick brown fox")]
-  (loop [match (re-find m)] 
-    (when match 
-      (println match) 
+  (loop [match (re-find m)]
+    (when match
+      (println match)
       (recur (re-find m)))))
 
 ;; (re-seq regexp string)
@@ -255,7 +252,6 @@
 (drop 2 (re-seq #"\w+" "the quick brown fox")) ;; ("brown" "fox")
 
 (map clojure.string/upper-case (re-seq #"\w+" "the quick brown fox")) ;; ("THE" "QUICK" "BROWN" "FOX")
-
 
 ;; Seq-ing the File System
 (import 'java.io.File)
@@ -274,11 +270,10 @@
 (defn minutes-to-millis [mins] (* mins 1000 60))
 
 (defn recently-modified? [file]
-  (> (.lastModified file) 
+  (> (.lastModified file)
      (- (System/currentTimeMillis) (minutes-to-millis 30))))
 
 (filter recently-modified? (file-seq (File. ".")))
-
 
 ;; Seq-ing a Stream
 
@@ -286,7 +281,7 @@
 
 (take 2 (line-seq (reader "src/examples/sequences.clj")))
 
-(with-open [rdr (reader "src/examples/sequences.clj")] 
+(with-open [rdr (reader "src/examples/sequences.clj")]
   (count (line-seq rdr)))
 
 (use '[clojure.java.io :only (reader)])
@@ -296,12 +291,12 @@
 (defn non-svn? [file] (not (.contains (.toString file) ".svn")))
 (defn clojure-source? [file] (.endsWith (.toString file) ".clj"))
 
-(defn clojure-loc [base-file] 
-  (reduce 
-   + 
-   (for [file (file-seq base-file) 
-         :when (and (clojure-source? file) (non-svn? file))] 
-     (with-open [rdr (reader file)] 
+(defn clojure-loc [base-file]
+  (reduce
+   +
+   (for [file (file-seq base-file)
+         :when (and (clojure-source? file) (non-svn? file))]
+     (with-open [rdr (reader file)]
        (count (filter non-blank? (line-seq rdr)))))))
 
 (clojure-loc (java.io.File. "/home/abedra/src/opensource/clojure/clojure"))
@@ -314,7 +309,6 @@
 (rest ()) ;; ()
 
 (pop ()) ;; java.lang.IllegalStateException: Can't pop empty list
-
 
 ;; Functions on Vectors
 
@@ -338,7 +332,6 @@
 (subvec [1 2 3 4 5] 1 3) ;; [2 3]
 
 (take 2 (drop 1 [1 2 3 4 5])) ;; (2 3)
-
 
 ;; Functions on Maps
 
@@ -396,10 +389,9 @@
 ;; (merge-with merge-fn & maps)
 (merge-with
  concat
- {:rubble ["Barney"], :flintstone ["Fred"]} 
- {:rubble ["Betty"], :flintstone ["Wilma"]} 
+ {:rubble ["Barney"], :flintstone ["Fred"]}
+ {:rubble ["Betty"], :flintstone ["Wilma"]}
  {:rubble ["Bam-Bam"], :flintstone ["Pebbles"]}) ;; {:rubble ("Barney" "Betty" "Bam-Bam"), :flintstone ("Fred" "Wilma" "Pebbles")}
-
 
 ;; Functions on Sets
 
@@ -424,16 +416,16 @@
 (def compositions
   #{{:name "The Art of the Fugue" :composer "J. S. Bach"}
     {:name "Musical Offering" :composer "J. S. Bach"}
-    {:name "Requiem" :composer "Giuseppe Verdi"} 
+    {:name "Requiem" :composer "Giuseppe Verdi"}
     {:name "Requiem" :composer "W. A. Mozart"}})
 
 (def composers
   #{{:composer "J. S. Bach" :country "Germany"}
     {:composer "W. A. Mozart" :country "Austria"}
-    {:composer "Giuseppe Verdi" :country "Italy"}}) 
+    {:composer "Giuseppe Verdi" :country "Italy"}})
 
-(def nations 
-  #{{:nation "Germany" :language "German"} 
+(def nations
+  #{{:nation "Germany" :language "German"}
     {:nation "Austria" :language "German"}
     {:nation "Italy" :language "Italian"}})
 

@@ -29,7 +29,7 @@
 (def current-composer (ref "Holst"))
 
 (dosync
- (ref-set current-track "Credo") 
+ (ref-set current-track "Credo")
  (ref-set current-composer "Byrd"))
 
 ;; alter
@@ -64,8 +64,8 @@
 (defn valid-message? [msg]
   (and (:sender msg) (:text msg)))
 
-(def validate-message-list 
-  #(every? valid-message? %)) 
+(def validate-message-list
+  #(every? valid-message? %))
 
 (def messages (ref () :validator validate-message-list))
 
@@ -127,12 +127,12 @@
 ;; Including Agents in Transactions
 (def backup-agent (agent "output/messages-backup.clj"))
 
-(defn add-message-with-backup [msg] 
-  (dosync 
-   (let [snapshot (commute messages conj msg)] 
-     (send-off backup-agent (fn [filename] 
-                              (spit filename snapshot) 
-                              filename)) 
+(defn add-message-with-backup [msg]
+  (dosync
+   (let [snapshot (commute messages conj msg)]
+     (send-off backup-agent (fn [filename]
+                              (spit filename snapshot)
+                              filename))
      snapshot)))
 
 (add-message-with-backup (->Message "John" "Message One"))
@@ -160,7 +160,7 @@ foo ;; 10
 
 ;; Acting at a Distance
 
-(defn ^:dynamic slow-double [n] 
+(defn ^:dynamic slow-double [n]
   (Thread/sleep 100)
   (* n 2))
 
@@ -170,10 +170,10 @@ foo ;; 10
 (time (dorun (calls-slow-double))) ;; "Elapsed time: 622.86675 msecs"
 
 ;; (memoize function)
-(defn demo-memoize [] 
-  (time 
-   (dorun 
-    (binding [slow-double (memoize slow-double)] 
+(defn demo-memoize []
+  (time
+   (dorun
+    (binding [slow-double (memoize slow-double)]
       (calls-slow-double)))))
 
 (demo-memoize) ;; "Elapsed time: 210.404166 msecs"
