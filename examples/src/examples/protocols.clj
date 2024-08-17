@@ -11,11 +11,11 @@
                            InputStreamReader.
                            BufferedReader.)]
       (loop [c (.read reader)]
-        (if (neg? c) 
+        (if (neg? c)
           (str sb)
-            (do
-              (.append sb (char c))
-              (recur (.read reader))))))))
+          (do
+            (.append sb (char c))
+            (recur (.read reader))))))))
 
 (defn expectorate [dst content]
   (with-open [writer (-> dst
@@ -447,8 +447,8 @@
                   (to-msec [this tempo] (+ (rand-int 1000) min-duration))
                   (key-number [this] (rand-int 100))
                   (play [this tempo midi-channel]
-                    (let [velocity (+ (rand-int 100) min-velocity)] 
-                      (.noteOn midi-channel (key-number this) velocity) 
+                    (let [velocity (+ (rand-int 100) min-velocity)]
+                      (.noteOn midi-channel (key-number this) velocity)
                       (Thread/sleep (to-msec this tempo)))))]
   (perform (repeat 15 rand-note)))
 

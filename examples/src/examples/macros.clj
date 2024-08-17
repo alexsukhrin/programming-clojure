@@ -11,8 +11,8 @@
 
 (unless true (println "this should not print")) ;; this should not print
 
-(defn unless [expr form] 
-  (println "About to test...") 
+(defn unless [expr form]
+  (println "About to test...")
   (if expr nil form))
 
 (unless false (println "this should print")) ;; this should print ; About to test...
@@ -22,7 +22,7 @@
 ;; Macros solve this problem,
 ;; (unless expr form) -> (if expr nil form)
 ;; (defmacro name doc-string? attr-map? [params*] body)
-(defmacro unless [expr form] 
+(defmacro unless [expr form]
   (list 'if expr nil form))
 
 (unless false (println "this should print")) ;; this should print
@@ -49,7 +49,7 @@
 ;; (macroexpand-1 form)
 (macroexpand-1 '(unless false (println "this should print"))) ;; (if false nil (println "this should print"))
 
-(defmacro bad-unless [expr form] 
+(defmacro bad-unless [expr form]
   (list 'if 'expr nil form))
 
 (macroexpand-1 '(bad-unless false (println "this should print"))) ;; (if expr nil (println "this should print"))
@@ -93,7 +93,7 @@
 ;; Syntax quote: Quote form, but allow internal unquoting so that form acts as a template. Symbols inside form are resolved to help prevent inadvertent symbol capture. Unquote: Use inside a syntax quote to substitute an unquoted value.
 
 ;; chain reimplements Clojure's .. macro
-(defmacro chain [x form] 
+(defmacro chain [x form]
   (list '. x form))
 
 (defmacro chain
@@ -106,11 +106,11 @@
 
 ;; hypothetical templating language
 (defmacro chain
-  ([x form] (. ${x} ${form}))
-  ([x form & more] (chain (. ${x} ${form}) ${more})))
+  ([x form] (. $ {x} $ {form}))
+  ([x form & more] (chain (. $ {x} $ {form}) $ {more})))
 
 ;; Syntax Quote, Unquote, and Splicing Unquote
-(defmacro chain [x form] 
+(defmacro chain [x form]
   `(. ~x ~form))
 
 (macroexpand '(chain arm getHand)) ;; (. arm getHand)
@@ -135,7 +135,7 @@
 
 ;; This won't work
 (defmacro bench [expr]
-`(let [start (System/nanoTime)
+  `(let [start (System/nanoTime)
          result ~expr]
      {:result result :elapsed (- (System/nanoTime) start)}))
 
@@ -169,10 +169,8 @@
 (comment
   (load-file "src/inspector.clj")
   (refer 'inspector)
-  (inspect-tree {:a 1 :b 2 :c [1 2 3 {:d 4 :e 5 :f [6 7 8]}]}) 
-  (inspect-table [[1 2 3] [4 5 6] [7 8 9] [10 11 12]])
-  
-  )
+  (inspect-tree {:a 1 :b 2 :c [1 2 3 {:d 4 :e 5 :f [6 7 8]}]})
+  (inspect-table [[1 2 3] [4 5 6] [7 8 9] [10 11 12]]))
 
 ;; Creating Vars
 (def person (create-struct :first-name :last-name))
@@ -211,11 +209,11 @@ Math/PI ;;  3.141592653589793
 ;; Wrapping Evaluation
 (with-out-str (print "hello, ") (print "world")) ;; "hello, world"
 
-(defmacro with-out-str 
+(defmacro with-out-str
   [& body]
-  `(let [s# (new java.io.StringWriter)] 
-     (binding [*out* s#] 
-       ~@body 
+  `(let [s# (new java.io.StringWriter)]
+     (binding [*out* s#]
+       ~@body
        (str s#))))
 
 ;; (assert expr)

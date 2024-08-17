@@ -8,16 +8,16 @@
   (getMessage [this]))
 
 (defrecord Duck [name]
-         Swimmable
+  Swimmable
   (swim [this]
-        "Duck swim!" name))
+    "Duck swim!" name))
 
 (def duck (->Duck "Katya"))
 (.swim duck)
 
-(defrecord Telegram [] 
-  Messenger 
-  (sendMessage [this] "Send telegram!") 
+(defrecord Telegram []
+  Messenger
+  (sendMessage [this] "Send telegram!")
   (getMessage [this] "Read message telegram!"))
 
 (defrecord Viber []
@@ -34,7 +34,7 @@
 
 (extend-type Telegram
   Swimmable
-  (swim [this] 
+  (swim [this]
     "Telegram, swim!"))
 
 (swim telegram1)
