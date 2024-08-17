@@ -11,7 +11,8 @@
                            InputStreamReader.
                            BufferedReader.)]
       (loop [c (.read reader)]
-        (if (neg? c) (str sb)
+        (if (neg? c) 
+          (str sb)
             (do
               (.append sb (char c))
               (recur (.read reader))))))))
